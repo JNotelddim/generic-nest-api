@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:14.3
+    container_name: generic-nest-api-postgres
+    hostname: generic-nest-api-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: generic-nest-api-dev
+    ports:
+      - '5556:5432'
+    volumes:
+      - generic-nest-api-postgres:/var/lib/postgresql/data
+volumes:
+  generic-nest-api-postgres:
+    name: generic-nest-api-postgres
