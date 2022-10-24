@@ -1,11 +1,4 @@
-// TODO: replace w/ whatever's from Prisma
-export interface User {
-  email: string;
-  username?: string;
-  timezone?: string;
-  firstName?: string;
-  lastName?: string;
-}
+import { User } from '@prisma/client';
 
 export interface LoginData {
   email: string;
