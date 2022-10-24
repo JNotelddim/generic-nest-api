@@ -1,49 +1,43 @@
-// import { StatusCodes } from 'http-status-codes';
+import { HttpException } from '@nestjs/common';
 
-// export class CustomError  {
-//   constructor(
-//     message: string,
-//     code: string,
-//     statusCode: StatusCodes = StatusCodes.OK,
-//     name = 'BraverError',
-//   ) {
-//     super(message, code, {
-//       statusCode,
-//     });
+export class CustomError extends HttpException {
+  constructor(
+    message: string,
+    statusCode: number,
+    name = 'GenericNestAPIError',
+  ) {
+    super(message, statusCode);
 
-//     Object.defineProperty(this, 'name', { value: name });
-//   }
-// }
+    Object.defineProperty(this, 'name', { value: name });
+  }
+}
 
-// export class BadRequestError extends CustomError {
-//   constructor(message: string, code = 'BAD_REQUEST') {
-//     super(message, code, StatusCodes.BAD_REQUEST);
-//   }
-// }
+export class BadRequestError extends CustomError {
+  constructor(message: string, code = 400) {
+    super(message, code);
+  }
+}
 
-// export class NotFoundError extends CustomError {
-//   constructor(message: string, code = 'NOT_FOUND') {
-//     super(message, code, StatusCodes.NOT_FOUND);
-//   }
-// }
+export class NotFoundError extends CustomError {
+  constructor(message: string, code = 404) {
+    super(message, code);
+  }
+}
 
-// export class ForbiddenError extends CustomError {
-//   constructor(message: string, code = 'FORBIDDEN') {
-//     super(message, code, StatusCodes.FORBIDDEN);
-//   }
-// }
+export class ForbiddenError extends CustomError {
+  constructor(message: string, code = 403) {
+    super(message, code);
+  }
+}
 
-// export class ConflictError extends CustomError {
-//   constructor(message: string, code = 'CONFLICT') {
-//     super(message, code, StatusCodes.CONFLICT);
-//   }
-// }
+export class ConflictError extends CustomError {
+  constructor(message: string, code = 409) {
+    super(message, code);
+  }
+}
 
-// export class UnknownError extends CustomError {
-//   constructor(
-//     message = 'An unknown error has occurred',
-//     code = 'UNKNOWN_ERROR',
-//   ) {
-//     super(message, code, StatusCodes.INTERNAL_SERVER_ERROR);
-//   }
-// }
+export class UnknownError extends CustomError {
+  constructor(message = 'An unknown error has occurred', code = 500) {
+    super(message, code);
+  }
+}

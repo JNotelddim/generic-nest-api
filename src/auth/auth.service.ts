@@ -8,6 +8,13 @@ import {
   UserCredential,
 } from 'firebase/auth';
 import {
+  EmailAddressAlreadyTakenError,
+  InvalidEmailAddressError,
+  UsernameAlreadyTakenError,
+  WeakPasswordError,
+} from 'src/error/auth.errors';
+import { UnknownError } from 'src/error/error-classes';
+import {
   LoginResponse,
   RegisterData,
   SignupResponse,
@@ -50,14 +57,12 @@ export class AuthService {
     } catch (err) {
       //   this.logger.error(`Error creating a JWT for user email ${user.email}`);
       //   this.logger.error(err);
-      //   throw new UnknownError();
-      throw new Error();
+      throw new UnknownError();
     }
 
     if (!jwt) {
       //   this.logger.error(`Error creating a JWT for user email ${user.email}`);
-      //   throw new UnknownError();
-      throw new Error();
+      throw new UnknownError();
     }
 
     return {
@@ -129,8 +134,7 @@ export class AuthService {
     // });
 
     if (existingUser) {
-      //   throw new EmailAddressAlreadyTakenError();
-      throw new Error();
+      throw new EmailAddressAlreadyTakenError();
     }
 
     if (username) {
@@ -141,8 +145,7 @@ export class AuthService {
       //   });
 
       if (existingUser) {
-        // throw new UsernameAlreadyTakenError();
-        throw new Error();
+        throw new UsernameAlreadyTakenError();
       }
     }
 
@@ -163,27 +166,22 @@ export class AuthService {
             //  this.logger.warn(
             //    `User with email ${email} present in firebase but not in database`,
             //  );
-            //  throw new EmailAddressAlreadyTakenError();
-            throw new Error();
+            throw new EmailAddressAlreadyTakenError();
           case 'auth/invalid-email':
-            //  throw new InvalidEmailAddressError();
-            throw new Error();
+            throw new InvalidEmailAddressError();
           case 'auth/weak-password':
-            //  throw new WeakPasswordError();
-            throw new Error();
+            throw new WeakPasswordError();
           default:
             // this.logger.error(
             //   `Error creating Firebase user with email ${email}`,
             // );
             // this.logger.error(err);
-            //  throw new UnknownError();
-            throw new Error();
+            throw new UnknownError();
         }
       }
       //    this.logger.error(`Error creating Firebase user with email ${email}`);
       //    this.logger.error(err);
-      throw new Error();
-      //    throw new UnknownError();
+      throw new UnknownError();
     }
 
     if (!userCredential.user) {
@@ -192,8 +190,7 @@ export class AuthService {
       //       userCredential,
       //     )}`,
       //   );
-      throw new Error();
-      //    throw new UnknownError();
+      throw new UnknownError();
     }
 
     const user: User = { email, username, firstName, lastName, timezone };
@@ -210,8 +207,7 @@ export class AuthService {
     } catch (err) {
       //    this.logger.error(`Error creating user db entity with email ${email}`);
       //    this.logger.error(err);
-      //    throw new UnknownError();
-      throw new Error();
+      throw new UnknownError();
     }
 
     return await this.getTokens(auth, user);
