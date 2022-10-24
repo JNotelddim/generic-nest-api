@@ -11,7 +11,6 @@ import {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // TODO: Return type User
   // TODO: set-cookie header w/ token
   @Post('login')
   login(@Body() body: LoginData): Promise<LoginResponse> {
@@ -19,7 +18,6 @@ export class AuthController {
     return this.authService.login(email, password);
   }
 
-  // TODO: return type User
   @Post('signup')
   signup(@Body() body: RegisterData): Promise<SignupResponse> {
     return this.authService.signup(body);

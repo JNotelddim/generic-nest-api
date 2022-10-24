@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
+import { randomUUID } from 'crypto';
 import { FirebaseError } from 'firebase/app';
 import {
   Auth,
@@ -7,8 +9,10 @@ import {
   signInWithEmailAndPassword,
   UserCredential,
 } from 'firebase/auth';
+import { DatabaseService } from 'src/database/database.service';
 import {
   EmailAddressAlreadyTakenError,
+  InvalidCredentialsError,
   InvalidEmailAddressError,
   UsernameAlreadyTakenError,
   WeakPasswordError,
@@ -18,7 +22,6 @@ import {
   LoginResponse,
   RegisterData,
   SignupResponse,
-  User,
   UserWithTokens,
 } from './auth.types';
 
@@ -32,7 +35,7 @@ import {
 // TODO: update return types
 @Injectable()
 export class AuthService {
-  //   constructor(private databaseService: DatabaseService) {}
+  constructor(private databaseService: DatabaseService) {}
 
   // TODO:
   // - get tokens
@@ -96,28 +99,26 @@ export class AuthService {
       }
     }
 
-    const user: User = { email };
+    let user: User;
 
-    // try {
-    //   //   user = await this.databaseService.user.findFirst({
-    //   //     where: {
-    //   //       email,
-    //   //       firebaseUid: userCredential.user.uid,
-    //   //     },
-    //   //   });
-    // } catch (err) {
-    //   //    this.logger.error(err);
-    //   //    throw new UnknownError();
-    //   throw new Error();
-    // }
+    try {
+      user = await this.databaseService.user.findFirst({
+        where: {
+          email,
+          firebaseUid: userCredential.user.uid,
+        },
+      });
+    } catch (err) {
+      //    this.logger.error(err);
+      throw new UnknownError();
+    }
 
-    // if (!user) {
-    //   //    this.logger.warn(
-    //   //      `User with email ${email} present in firebase but not in database`,
-    //   //    );
-    //   //    throw new InvalidCredentialsError();
-    //   throw new Error();
-    // }
+    if (!user) {
+      //    this.logger.warn(
+      //      `User with email ${email} present in firebase but not in database`,
+      //    );
+      throw new InvalidCredentialsError();
+    }
 
     // TODO: create JWT, return token.
     return this.getTokens(auth, user);
@@ -125,24 +126,23 @@ export class AuthService {
 
   async signup(body: RegisterData): Promise<SignupResponse> {
     const { email, username, password, firstName, lastName, timezone } = body;
-    const existingUser = undefined;
 
-    // let existingUser = await this.databaseService.user.findUnique({
-    //   where: {
-    //     email,
-    //   },
-    // });
+    let existingUser = await this.databaseService.user.findUnique({
+      where: {
+        email,
+      },
+    });
 
     if (existingUser) {
       throw new EmailAddressAlreadyTakenError();
     }
 
     if (username) {
-      //   existingUser = await this.databaseService.user.findUnique({
-      //     where: {
-      //       username,
-      //     },
-      //   });
+      existingUser = await this.databaseService.user.findUnique({
+        where: {
+          username,
+        },
+      });
 
       if (existingUser) {
         throw new UsernameAlreadyTakenError();
@@ -193,17 +193,20 @@ export class AuthService {
       throw new UnknownError();
     }
 
-    const user: User = { email, username, firstName, lastName, timezone };
+    let user: User;
 
     try {
-      //    user = await this.databaseService.user.create({
-      //      data: {
-      //        firebaseUid: userCredential.user.uid,
-      //        email: userCredential.user.email,
-      //        timeZone,
-      //        username,
-      //      },
-      //    });
+      user = await this.databaseService.user.create({
+        data: {
+          id: randomUUID(),
+          firebaseUid: userCredential.user.uid,
+          email: userCredential.user.email,
+          firstName,
+          lastName,
+          timezone,
+          username,
+        },
+      });
     } catch (err) {
       //    this.logger.error(`Error creating user db entity with email ${email}`);
       //    this.logger.error(err);
