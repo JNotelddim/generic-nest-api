@@ -25,14 +25,6 @@ import {
   UserWithTokens,
 } from './auth.types';
 
-// TODO: replace this when Prisma is integrated.
-// interface DatabaseService {
-//   user: any;
-// }
-
-// TODO: check for & use real user data from database in service methods.
-
-// TODO: update return types
 @Injectable()
 export class AuthService {
   constructor(private databaseService: DatabaseService) {}
@@ -75,6 +67,12 @@ export class AuthService {
     };
   }
 
+  /**
+   * Attempt to authenticate a user based on credentials provided.
+   * @param email
+   * @param password
+   * @returns
+   */
   async login(email: string, password: string): Promise<LoginResponse> {
     const auth = getAuth();
 
@@ -124,6 +122,11 @@ export class AuthService {
     return this.getTokens(auth, user);
   }
 
+  /**
+   * Attempt to register a new user given form submission.
+   * @param body
+   * @returns
+   */
   async signup(body: RegisterData): Promise<SignupResponse> {
     const { email, username, password, firstName, lastName, timezone } = body;
 
