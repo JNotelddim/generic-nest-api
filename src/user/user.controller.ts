@@ -9,17 +9,18 @@ export class UsersController {
 
   // TODO authGuards - delete, getbyId
 
+  @UseGuards(FirebaseGuard)
   @Get('users/:id')
   async getUser(@Param('id') id: string): Promise<UserModel> {
     return this.userService.user({ id });
   }
 
-  @UseGuards(FirebaseGuard)
   @Get('users')
   async getUsers(): Promise<UserModel[]> {
     return this.userService.users({});
   }
 
+  @UseGuards(FirebaseGuard)
   @Delete('user/:id')
   async deleteUser(@Param('id') id: string): Promise<UserModel> {
     return this.userService.deleteUser({ id });
