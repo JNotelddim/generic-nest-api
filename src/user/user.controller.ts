@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User as UserModel } from '@prisma/client';
+import { FirebaseGuard } from 'src/auth/firebase/firebase.guard';
 
 @Controller()
 export class UsersController {
@@ -13,6 +14,7 @@ export class UsersController {
     return this.userService.user({ id });
   }
 
+  @UseGuards(FirebaseGuard)
   @Get('users')
   async getUsers(): Promise<UserModel[]> {
     return this.userService.users({});
