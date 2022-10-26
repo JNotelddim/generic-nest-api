@@ -754,6 +754,11 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.8.0.tgz#88dfc717fb950276fd0fdee879fad2c041e33475"
   integrity sha512-Q8erQds5LuAUgNuFOt/tu/abffYUHYxN+Ogp2V5EOssfFG7Ja4ce324Sqyq41u/vB5CSr+tfYS3JzTDrDxCvdw==
 
+"@golevelup/ts-jest@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@golevelup/ts-jest/-/ts-jest-0.3.3.tgz#f9901f3eaaa7fd366d97538d2fc859ffc3052693"
+  integrity sha512-gut5EhD2S7W1p+C/IsUS1o0P5SHgxsN9TqHyRTjG+rfycniLNBfvIWZPEizpsTev/lR10/XOTpE0YicxPme2+Q==
+
 "@google-cloud/firestore@^6.4.0":
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/@google-cloud/firestore/-/firestore-6.4.0.tgz#cc6899fda202c385a285a8628c7e0c380828bd8b"
@@ -1196,10 +1201,10 @@
     jsonc-parser "3.2.0"
     pluralize "8.0.0"
 
-"@nestjs/testing@^9.0.0":
-  version "9.1.4"
-  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-9.1.4.tgz#8bb190f07356c796b828fba35018498d5ce8ab09"
-  integrity sha512-gO6b9QJyUajh38DNdss9gSE0UO7x60Jh10W4SwHEjQT1W+yxaEWr3aLyuQItTvUVY6C28XKFLTykMpr8GO28Ug==
+"@nestjs/testing@^9.1.6":
+  version "9.1.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-9.1.6.tgz#e85601d8cb5158bec4a5029b435c352dc440be9c"
+  integrity sha512-3kdTgiv5DHRHMQ/befLWd/60LZWjOM2V+SwOLqGkITt1yjo+jpkDze8/f0ZXVGEa6pcWYZ5oeedbL2T1nyUKSQ==
   dependencies:
     tslib "2.4.0"
 
