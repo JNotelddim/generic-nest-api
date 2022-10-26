@@ -37,8 +37,12 @@ lerna-debug.log*
 
 
 ### Custom
+
 # General
 google-credentials.json
+
+# Firebase Emulators
+.emulator-data
 
 # Vim
 *.swp
