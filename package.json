@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev:docker:up": "docker-compose -f docker-compose.dev.yml -p generic-nest-api up -d postgres",
+    "emulators:start": "firebase emulators:start --import=./.emulator-data --export-on-exit",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

@@ -62,9 +62,10 @@ This will create two files: `firebase.json` and `.firebaserc`. After all that's 
 
 ### Environment variables
 
-> This should have already been done. You just need to run `yarn`
+Ensure your `.env` has a `FIREBASE_AUTH_EMULATOR_HOST` entry which matches the `ip-address:port` combination that you've used
+for your local emulators to run on.
 
-Create a copy of [.env.example](.env.example) called `.env`
+> If you don't already have a `.env`, copy it from `.env.example`
 
 ### Running the app
 
