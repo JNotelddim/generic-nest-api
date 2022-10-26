@@ -1,29 +1,37 @@
-import { DatabaseService } from 'src/database/database.service';
-import { mockUsers } from 'src/test/fixtures/user.fixtures';
+import { Test } from '@nestjs/testing';
 import { UserService } from './user.service';
+import { DatabaseService } from '../database/database.service';
+import { mockUsers } from '../test/fixtures/user.fixtures';
 
 /**
  * UNIT TESTS
  * on individual UserService methods
  */
 describe('UserService Unit Tests', () => {
-  let databseService: DatabaseService;
   let userService: UserService;
 
-  beforeEach(() => {
-    databseService = new DatabaseService();
-    userService = new UserService(databseService);
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      providers: [UserService, DatabaseService],
+    })
+      .useMocker((token) => {
+        if (token === DatabaseService) {
+          return {
+            user: { findUnique: jest.fn().mockResolvedValue(mockUsers[0]) },
+          };
+        }
+      })
+      .compile();
+
+    userService = moduleRef.get(UserService);
   });
 
-  it('`user` fn gets an individual user by id', () => {
+  it('`user` fn gets an individual user by id', async () => {
     // Arrange
-    const expected = mockUsers;
-    jest
-      .spyOn(databseService.user, 'findUnique')
-      .mockImplementation(() => mockUsers[0] as any);
+    const expected = mockUsers[0];
 
     // Act
-    const result = userService.user({ id: mockUsers[0].id });
+    const result = await userService.user({ id: mockUsers[0].id });
 
     // Assert
     expect(result).toBe(expected);
