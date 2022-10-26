@@ -1,5 +1,5 @@
-import { DatabaseService } from '../database/database.service';
-import { mockUsers } from '../test/fixtures/user.fixtures';
+import { DatabaseService } from 'src/database/database.service';
+import { mockUsers } from 'src/test/fixtures/user.fixtures';
 import { UserService } from './user.service';
 
 /**
