@@ -1,5 +1,5 @@
-import { DatabaseService } from 'src/database/database.service';
-import { mockUsers } from 'src/test/fixtures/user.fixtures';
+import { DatabaseService } from '../database/database.service';
+import { mockUsers } from '../test/fixtures/user.fixtures';
 import { UserService } from './user.service';
 
 /**
@@ -15,15 +15,15 @@ describe('UserService Unit Tests', () => {
     userService = new UserService(databseService);
   });
 
-  it('`user` fn gets an individual user by id', () => {
+  it('`user` fn gets an individual user by id', async () => {
     // Arrange
-    const expected = mockUsers;
+    const expected = mockUsers[0];
     jest
       .spyOn(databseService.user, 'findUnique')
       .mockImplementation(() => mockUsers[0] as any);
 
     // Act
-    const result = userService.user({ id: mockUsers[0].id });
+    const result = await userService.user({ id: mockUsers[0].id });
 
     // Assert
     expect(result).toBe(expected);
