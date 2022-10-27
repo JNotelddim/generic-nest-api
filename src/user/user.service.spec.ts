@@ -1,3 +1,4 @@
+import { Prisma, User } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import { mockUsers } from 'src/test/fixtures/user.fixtures';
 import { UserService } from './user.service';
@@ -20,24 +21,12 @@ describe('UserService Unit Tests', () => {
     const expected = mockUsers[0];
     jest
       .spyOn(databseService.user, 'findUnique')
-      .mockImplementation(() => mockUsers[0]);
+      .mockImplementation(
+        () => mockUsers[0] as unknown as Prisma.Prisma__UserClient<User, null>,
+      );
 
     // Act
-    const result = await userService.user({ id: mockUsers[0].id }); // TODO: resolve type
-
-    // Assert
-    expect(result).toBe(expected);
-  });
-
-  it('`users` fn gets full list of users', async () => {
-    // Arrange
-    const expected = mockUsers;
-    jest
-      .spyOn(databseService.user, 'findMany')
-      .mockImplementation(() => mockUsers); // TODO: resolve type
-
-    // Act
-    const result = await userService.users({});
+    const result = await userService.user({ id: mockUsers[0].id });
 
     // Assert
     expect(result).toBe(expected);
