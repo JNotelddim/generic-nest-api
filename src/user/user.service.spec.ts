@@ -20,10 +20,24 @@ describe('UserService Unit Tests', () => {
     const expected = mockUsers[0];
     jest
       .spyOn(databseService.user, 'findUnique')
-      .mockImplementation(() => mockUsers[0] as any);
+      .mockImplementation(() => mockUsers[0]);
 
     // Act
-    const result = await userService.user({ id: mockUsers[0].id });
+    const result = await userService.user({ id: mockUsers[0].id }); // TODO: resolve type
+
+    // Assert
+    expect(result).toBe(expected);
+  });
+
+  it('`users` fn gets full list of users', async () => {
+    // Arrange
+    const expected = mockUsers;
+    jest
+      .spyOn(databseService.user, 'findMany')
+      .mockImplementation(() => mockUsers); // TODO: resolve type
+
+    // Act
+    const result = await userService.users({});
 
     // Assert
     expect(result).toBe(expected);

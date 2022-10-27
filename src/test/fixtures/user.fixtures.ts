@@ -1,3 +1,5 @@
+import { Prisma, User } from '@prisma/client';
+
 export const mockUsers = [
   {
     id: 'd5d721ac-9d86-4097-b32c-ad7be6af46a5',
@@ -17,4 +19,4 @@ export const mockUsers = [
     lastName: 'MetaLab',
     timezone: undefined,
   },
-];
+] as unknown as Prisma.Prisma__UserClient<User>[];
