@@ -7,8 +7,6 @@ import { FirebaseGuard } from 'src/auth/firebase/firebase.guard';
 export class UsersController {
   constructor(private readonly userService: UserService) {}
 
-  // TODO authGuards - delete, getbyId
-
   @UseGuards(FirebaseGuard)
   @Get('users/:id')
   async getUser(@Param('id') id: string): Promise<UserModel> {
