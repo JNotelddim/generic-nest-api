@@ -1,12 +1,19 @@
+import { config } from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { initFirebase } from './util/init-firebase';
+
+config();
 
 const domain = 'http://0.0.0.0';
 const port = '3000';
 
 async function bootstrap() {
+  initFirebase();
+
   const app = await NestFactory.create(AppModule);
   await app.listen(port);
+
   console.log(LOGO_BANNER);
   console.log(`Listening on: ${domain}:${port}`);
 }
