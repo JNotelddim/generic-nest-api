@@ -1,0 +1,19 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""User"""
+type User {
+  id: ID!
+  firebaseUid: String!
+  email: String!
+  username: String!
+  firstName: String
+  lastName: String
+  timezone: String
+}
+
+type Query {
+  userById(id: String!): User
+  users: [User!]!
+}
