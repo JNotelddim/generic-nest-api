@@ -31,6 +31,7 @@ export class UserService {
     });
   }
 
+  // TODO: delete this or properly integrate it with firebase and use it in AuthModule
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
     return this.db.user.create({
       data,
@@ -48,6 +49,7 @@ export class UserService {
     });
   }
 
+  // TODO: delete this or properly integrate it with firebase and use it in AuthModule
   async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
     return this.db.user.delete({
       where,
