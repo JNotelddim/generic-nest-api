@@ -31,7 +31,6 @@ export class UserService {
     });
   }
 
-  // TODO: delete this or properly integrate it with firebase and use it in AuthModule
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
     return this.db.user.create({
       data,
@@ -54,5 +53,20 @@ export class UserService {
     return this.db.user.delete({
       where,
     });
+  }
+
+  /**
+   * Util function for verifying whether or not a user already exists
+   */
+  async checkIfUserExists(
+    whereClauses: Array<Prisma.UserWhereUniqueInput>,
+  ): Promise<boolean> {
+    const users = await this.db.user.findMany({
+      where: {
+        OR: whereClauses,
+      },
+    });
+
+    return users !== undefined && users.length !== 0;
   }
 }
