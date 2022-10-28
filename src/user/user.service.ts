@@ -59,12 +59,10 @@ export class UserService {
    * Util function for verifying whether or not a user already exists
    */
   async checkIfUserExists(
-    whereClauses: Array<Prisma.UserWhereUniqueInput>,
+    where: Prisma.UserWhereUniqueInput,
   ): Promise<boolean> {
     const users = await this.db.user.findMany({
-      where: {
-        OR: whereClauses,
-      },
+      where,
     });
 
     return users !== undefined && users.length !== 0;

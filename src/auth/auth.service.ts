@@ -7,10 +7,12 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
+  deleteUser,
   UserCredential,
 } from 'firebase/auth';
 import { DatabaseService } from 'src/database/database.service';
 import {
+  BadDeleteInputError,
   EmailAddressAlreadyTakenError,
   InvalidCredentialsError,
   InvalidEmailAddressError,
@@ -20,6 +22,8 @@ import {
 import { UnknownError } from 'src/error/error-classes';
 import { UserService } from 'src/user/user.service';
 import {
+  DeleteAccountData,
+  DeleteResponse,
   LoginResponse,
   RegisterData,
   SignupResponse,
@@ -165,11 +169,11 @@ export class AuthService {
     const { email, username, password, firstName, lastName, timezone } = body;
 
     // Prevent duplicates - there are unique constraints on certain fields.
-    let userExists = this.userService.checkIfUserExists([{ email }]);
+    let userExists = this.userService.checkIfUserExists({ email });
     if (userExists) {
       throw new EmailAddressAlreadyTakenError();
     }
-    userExists = this.userService.checkIfUserExists([{ username }]);
+    userExists = this.userService.checkIfUserExists({ username });
     if (userExists) {
       throw new UsernameAlreadyTakenError();
     }
@@ -200,5 +204,37 @@ export class AuthService {
 
     // Ensure the client receives the appropriate tokens.
     return await this.getTokens(auth, user);
+  }
+
+  // TODO: finish - needs User object
+  async deleteAccount(body: DeleteAccountData): Promise<DeleteResponse> {
+    const { id, email, firebaseUid } = body;
+
+    // We can't delete a user that doesn't exist.
+    const userExists = await this.userService.checkIfUserExists({
+      email,
+      id,
+      firebaseUid,
+    });
+    if (!userExists) {
+      throw new BadDeleteInputError();
+    }
+
+    // TODO: where to get the user credentials from?
+    try {
+      // deleteUser(user)
+    } catch (e) {
+      throw new InvalidCredentialsError();
+    }
+
+    try {
+      await this.userService.deleteUser({ id });
+    } catch (e) {
+      throw new UnknownError();
+    }
+
+    return {
+      success: true,
+    };
   }
 }

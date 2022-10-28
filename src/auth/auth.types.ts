@@ -14,6 +14,12 @@ export interface RegisterData {
   timezone?: string;
 }
 
+export interface DeleteAccountData {
+  id: string;
+  email: string;
+  firebaseUid: string;
+}
+
 export interface UserWithTokens {
   jwt: string;
   refreshToken: string;
@@ -22,3 +28,4 @@ export interface UserWithTokens {
 
 export type LoginResponse = UserWithTokens;
 export type SignupResponse = UserWithTokens;
+export type DeleteResponse = { success: boolean; error?: string };
