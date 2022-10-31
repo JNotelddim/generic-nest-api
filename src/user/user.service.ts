@@ -20,15 +20,25 @@ export class UserService {
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
     orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<User[]> {
+  }): Promise<Partial<User>[]> {
     const { skip, take, cursor, where, orderBy } = params;
-    return this.db.user.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
+    return this.db.user
+      .findMany({
+        skip,
+        take,
+        cursor,
+        where,
+        orderBy,
+      })
+      .then((users) =>
+        users.map(({ id, email, username, firstName, lastName }) => ({
+          id,
+          email,
+          username,
+          firstName,
+          lastName,
+        })),
+      );
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {

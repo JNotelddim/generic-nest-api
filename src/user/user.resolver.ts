@@ -1,6 +1,6 @@
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { User } from 'src/graphql/models/user.model';
+import { User, PartialUser } from 'src/graphql/models/user.model';
 import { UseGuards } from '@nestjs/common';
 import { FirebaseGuard } from 'src/auth/firebase/firebase.guard';
 
@@ -14,8 +14,8 @@ export class UserResolver {
     return await this.userService.user({ id });
   }
 
-  @Query(() => [User])
-  async users(): Promise<Array<User | null>> {
+  @Query(() => [PartialUser])
+  async users(): Promise<Array<Partial<User> | null>> {
     return await this.userService.users({});
   }
 }

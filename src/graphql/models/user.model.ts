@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, PartialType } from '@nestjs/graphql';
 
 @ObjectType({ description: 'User' })
 export class User {
@@ -7,7 +7,6 @@ export class User {
 
   @Field()
   firebaseUid: string;
-
   @Field()
   email: string;
 
@@ -23,3 +22,5 @@ export class User {
   @Field({ nullable: true })
   timezone: string;
 }
+
+export class PartialUser extends PartialType(User) {}

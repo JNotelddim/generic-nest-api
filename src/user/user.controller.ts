@@ -14,7 +14,7 @@ export class UsersController {
   }
 
   @Get('users')
-  async getUsers(): Promise<UserModel[]> {
+  async getUsers(): Promise<Partial<UserModel>[]> {
     return this.userService.users({});
   }
 
