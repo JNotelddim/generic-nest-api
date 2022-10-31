@@ -10,6 +10,9 @@ const AUTH_EMULATOR_CONFIG: FirebaseOptions = {
   projectId: 'generic-nest-api',
 };
 
+// TODO: swap from direct access via process.env to use of @nestjs/config
+// TODO: add app init checks for env vars by key
+
 export function initFirebase() {
   console.log({ firebaseconfig: process.env.FIREBASE_CLIENT_CONFIG });
 

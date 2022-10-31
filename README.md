@@ -12,7 +12,6 @@ This repository utilizes
 - a local [PostgresQL](https://www.postgresql.org/) database (there's a docker image!),
 - [Prisma ORM](https://www.prisma.io/) for schema & db-management purposes,
 - [Firebase](https://firebase.google.com/) for Authentication,
-- examples of using [Amazon Web Services](https://aws.amazon.com/) and the [AWS SDK](https://aws.amazon.com/sdk-for-javascript/),
 - [Postman Collections](https://www.postman.com/collection/) to facilitate verifying the API out-of-the-box,
 - and [Apollo Server](https://www.apollographql.com/docs/apollo-server/) to provide graphs as an alternative to the REST api.
 
@@ -25,23 +24,25 @@ Documentation
 
 - [ ] README sections
 
-  - environment info
+  - [ ] environment info
   - [ ] App Setup w/ Existing Service Accounts: set local db, copy .env vars,
   - [ ] App Setup w/o Existing Service Accounts: copying db, setting up firebase and aws accounts, setting up env vars
 
 - docs/
-- [ ] FIREBASE
+- [x] FIREBASE
   - set up prod account
   - set up local emulation
   - auth guards & how they tie in to Firebase
-- [ ] DATABASE
+- [x] DATABASE
   - docker image,
   - prisma setup: migrations & seed
-- [ ] AWS
-- [ ] TESTs
-  - unit vs integrations tests
-  - setup / cleanup notes
-  - mocking utils notes
+- [x] TESTs
+  - [ ] unit vs integrations tests
+  - [ ] setup / cleanup notes
+  - [ ] mocking utils notes
+- [ ] GraphQL / Apollo
+  - resolvers & how the schema is generated
+  - where to look for the generated types
 - [ ] POSTMAN
   - how the collections work, how to add/change them, what's needed
 

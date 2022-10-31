@@ -7,10 +7,12 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
+  deleteUser,
   UserCredential,
 } from 'firebase/auth';
 import { DatabaseService } from 'src/database/database.service';
 import {
+  BadDeleteInputError,
   EmailAddressAlreadyTakenError,
   InvalidCredentialsError,
   InvalidEmailAddressError,
@@ -18,7 +20,10 @@ import {
   WeakPasswordError,
 } from 'src/error/auth.errors';
 import { UnknownError } from 'src/error/error-classes';
+import { UserService } from 'src/user/user.service';
 import {
+  DeleteAccountData,
+  DeleteResponse,
   LoginResponse,
   RegisterData,
   SignupResponse,
@@ -27,7 +32,10 @@ import {
 
 @Injectable()
 export class AuthService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(
+    private databaseService: DatabaseService,
+    private userService: UserService,
+  ) {}
 
   // TODO:
   // - get tokens
@@ -50,13 +58,10 @@ export class AuthService {
       jwt = await auth.currentUser.getIdToken();
       refreshToken = auth.currentUser.refreshToken;
     } catch (err) {
-      //   this.logger.error(`Error creating a JWT for user email ${user.email}`);
-      //   this.logger.error(err);
       throw new UnknownError();
     }
 
     if (!jwt) {
-      //   this.logger.error(`Error creating a JWT for user email ${user.email}`);
       throw new UnknownError();
     }
 
@@ -98,7 +103,6 @@ export class AuthService {
     }
 
     let user: User;
-
     try {
       user = await this.databaseService.user.findFirst({
         where: {
@@ -107,53 +111,25 @@ export class AuthService {
         },
       });
     } catch (err) {
-      //    this.logger.error(err);
       throw new UnknownError();
     }
-
     if (!user) {
-      //    this.logger.warn(
-      //      `User with email ${email} present in firebase but not in database`,
-      //    );
       throw new InvalidCredentialsError();
     }
 
-    // TODO: create JWT, return token.
+    // Ensure the client receives the appropriate tokens.
     return this.getTokens(auth, user);
   }
 
   /**
-   * Attempt to register a new user given form submission.
-   * @param body
-   * @returns
+   * Helper function to facilitate the Firebase Auth entry creation for
+   * new user credentials.
    */
-  async signup(body: RegisterData): Promise<SignupResponse> {
-    const { email, username, password, firstName, lastName, timezone } = body;
-
-    let existingUser = await this.databaseService.user.findUnique({
-      where: {
-        email,
-      },
-    });
-
-    if (existingUser) {
-      throw new EmailAddressAlreadyTakenError();
-    }
-
-    if (username) {
-      existingUser = await this.databaseService.user.findUnique({
-        where: {
-          username,
-        },
-      });
-
-      if (existingUser) {
-        throw new UsernameAlreadyTakenError();
-      }
-    }
-
-    const auth = getAuth();
-
+  private async createFirebaseAccount(
+    auth: Auth,
+    email: string,
+    password: string,
+  ) {
     let userCredential: UserCredential;
 
     try {
@@ -166,56 +142,99 @@ export class AuthService {
       if (err instanceof FirebaseError) {
         switch (err.code) {
           case 'auth/email-already-in-use':
-            //  this.logger.warn(
-            //    `User with email ${email} present in firebase but not in database`,
-            //  );
-            throw new EmailAddressAlreadyTakenError();
           case 'auth/invalid-email':
             throw new InvalidEmailAddressError();
           case 'auth/weak-password':
             throw new WeakPasswordError();
           default:
-            // this.logger.error(
-            //   `Error creating Firebase user with email ${email}`,
-            // );
-            // this.logger.error(err);
             throw new UnknownError();
         }
       }
-      //    this.logger.error(`Error creating Firebase user with email ${email}`);
-      //    this.logger.error(err);
       throw new UnknownError();
     }
 
     if (!userCredential.user) {
-      //   this.logger.error(
-      //     `Something went wrong registering user ${email}: ${JSON.stringify(
-      //       userCredential,
-      //     )}`,
-      //   );
       throw new UnknownError();
     }
 
-    let user: User;
+    return userCredential;
+  }
 
+  /**
+   * Attempt to register a new user given form submission.
+   * @param body
+   * @returns
+   */
+  async signup(body: RegisterData): Promise<SignupResponse> {
+    const { email, username, password, firstName, lastName, timezone } = body;
+
+    // Prevent duplicates - there are unique constraints on certain fields.
+    let userExists = this.userService.checkIfUserExists({ email });
+    if (userExists) {
+      throw new EmailAddressAlreadyTakenError();
+    }
+    userExists = this.userService.checkIfUserExists({ username });
+    if (userExists) {
+      throw new UsernameAlreadyTakenError();
+    }
+
+    // Proceed with creation now that credentials are verified to not be in use.
+    const auth = getAuth();
+    const userCredential = await this.createFirebaseAccount(
+      auth,
+      email,
+      password,
+    );
+
+    // Create a database entry in our Users table now that the associated Firebase entry exists.
+    let user: User;
     try {
-      user = await this.databaseService.user.create({
-        data: {
-          id: randomUUID(),
-          firebaseUid: userCredential.user.uid,
-          email: userCredential.user.email,
-          firstName,
-          lastName,
-          timezone,
-          username,
-        },
+      user = await this.userService.createUser({
+        id: randomUUID(),
+        firebaseUid: userCredential.user.uid,
+        email: userCredential.user.email,
+        firstName,
+        lastName,
+        timezone,
+        username,
       });
     } catch (err) {
-      //    this.logger.error(`Error creating user db entity with email ${email}`);
-      //    this.logger.error(err);
       throw new UnknownError();
     }
 
+    // Ensure the client receives the appropriate tokens.
     return await this.getTokens(auth, user);
+  }
+
+  // TODO: finish - needs User object
+  async deleteAccount(body: DeleteAccountData): Promise<DeleteResponse> {
+    const { id, email, firebaseUid } = body;
+
+    // We can't delete a user that doesn't exist.
+    const userExists = await this.userService.checkIfUserExists({
+      email,
+      id,
+      firebaseUid,
+    });
+    if (!userExists) {
+      throw new BadDeleteInputError();
+    }
+
+    // TODO: where to get the user credentials from?
+    try {
+      // deleteUser(user)
+    } catch (e) {
+      throw new InvalidCredentialsError();
+    }
+
+    try {
+      await this.userService.deleteUser({ id });
+    } catch (e) {
+      throw new UnknownError();
+    }
+
+    return {
+      success: true,
+    };
   }
 }

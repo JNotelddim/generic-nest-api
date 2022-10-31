@@ -30,6 +30,12 @@ export class UsernameAlreadyTakenError extends BadRequestError {
   }
 }
 
+export class BadDeleteInputError extends BadRequestError {
+  constructor() {
+    super('No accounts aligned with the given input.');
+  }
+}
+
 export class InvalidCredentialsError extends UnauthorizedError {
   constructor() {
     super('Invalid credentials');

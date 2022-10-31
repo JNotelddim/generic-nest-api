@@ -48,9 +48,23 @@ export class UserService {
     });
   }
 
+  // TODO: delete this or properly integrate it with firebase and use it in AuthModule
   async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
     return this.db.user.delete({
       where,
     });
+  }
+
+  /**
+   * Util function for verifying whether or not a user already exists
+   */
+  async checkIfUserExists(
+    where: Prisma.UserWhereUniqueInput,
+  ): Promise<boolean> {
+    const users = await this.db.user.findMany({
+      where,
+    });
+
+    return users !== undefined && users.length !== 0;
   }
 }
